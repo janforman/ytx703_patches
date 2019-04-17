@@ -1,0 +1,26 @@
+From d58a01efcb7c9bef84cbced01fea3d9ed6e99ad5 Mon Sep 17 00:00:00 2001
+From: Jan Forman <info@janforman.com>
+Date: Sat, 13 Apr 2019 08:43:44 +0000
+Subject: [PATCH] Better power save
+
+Change-Id: I23cd8b7af50a08a227d3372938dc9266fd3e71d3
+---
+ BoardConfigCommon.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/BoardConfigCommon.mk b/BoardConfigCommon.mk
+index 4ef691a..109022e 100644
+--- a/BoardConfigCommon.mk
++++ b/BoardConfigCommon.mk
+@@ -51,7 +51,7 @@ TARGET_NO_BOOTLOADER := true
+ # Kernel
+ BOARD_KERNEL_BASE := 0x80000000
+ BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci
+-BOARD_KERNEL_CMDLINE += ramoops.mem_address=0x30000000 ramoops.mem_size=0x300000 ramoops.ecc=1 ramoops.console_size=0x20000
++BOARD_KERNEL_CMDLINE += ramoops.mem_address=0x30000000 ramoops.mem_size=0x300000 ramoops.ecc=1 ramoops.console_size=0x20000 pm.sleep.mode=2
+ ifeq ($(WITH_TWRP), true)
+ BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+ endif
+-- 
+2.7.4
+

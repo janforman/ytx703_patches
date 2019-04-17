@@ -1,0 +1,52 @@
+From 80fe96560c0acb05d5f9d61e3c377cc260f58b2a Mon Sep 17 00:00:00 2001
+From: Jan Forman <info@janforman.com>
+Date: Tue, 16 Apr 2019 20:46:20 +0000
+Subject: [PATCH] ZRAM-Remove-Device
+
+Change-Id: Ica2666d9f453ed7fb4a3eacab1ae678fd9793c64
+---
+ configs/fstab.qcom           | 3 ---
+ configs/init/hw/init.qcom.rc | 5 -----
+ system.prop                  | 2 --
+ 3 files changed, 10 deletions(-)
+
+diff --git a/configs/fstab.qcom b/configs/fstab.qcom
+index 3b8202d..54fb004 100644
+--- a/configs/fstab.qcom
++++ b/configs/fstab.qcom
+@@ -21,6 +21,3 @@
+ # SDCard
+ /devices/soc.0/7864900.sdhci/mmc_host*              auto               auto    defaults                                                                       voldmanaged=sdcard1:auto,encryptable=userdata
+ /devices/platform/msm_hsusb_host/usb*               auto               auto    defaults                                                                       voldmanaged=usb:auto
+-
+-# ZRAM
+-/dev/block/zram0                                    none               swap    defaults                                                                       zramsize=536870912
+diff --git a/configs/init/hw/init.qcom.rc b/configs/init/hw/init.qcom.rc
+index 4d87039..438bf76 100644
+--- a/configs/init/hw/init.qcom.rc
++++ b/configs/init/hw/init.qcom.rc
+@@ -292,8 +292,3 @@ on property:ro.data.large_tcp_window_size=true
+ on property:sys.sysctl.tcp_adv_win_scale=*
+     write /proc/sys/net/ipv4/tcp_adv_win_scale ${sys.sysctl.tcp_adv_win_scale}
+ 
+-#enable zram
+-on property:ro.config.zram=true
+-    swapon_all /vendor/etc/fstab.qcom
+-    write /proc/sys/vm/swappiness 100
+-
+diff --git a/system.prop b/system.prop
+index 4a0ac2a..a1f245b 100644
+--- a/system.prop
++++ b/system.prop
+@@ -118,8 +118,6 @@ ro.core_ctl_max_cpu=4
+ persist.debug.8976.config=true
+ ro.cutoff_voltage_mv=3200
+ 
+-ro.config.zram=true
+-
+ # system props for the cne module #
+ # 4 - enable NSRM adb root;#
+ # 1 - Only CnE is enabled; NSRM, FMC, and WQE are disabled#
+-- 
+2.7.4
+

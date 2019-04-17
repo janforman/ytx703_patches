@@ -1,0 +1,26 @@
+From 77ed88223d895472c71deaf7d5624e90d6e24510 Mon Sep 17 00:00:00 2001
+From: Jan Forman <info@janforman.com>
+Date: Sun, 14 Apr 2019 13:36:41 +0000
+Subject: [PATCH] Framebuffers 2
+
+Change-Id: I261acf337b88e4f60820204772971529f08dbd00
+---
+ BoardConfigCommon.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/BoardConfigCommon.mk b/BoardConfigCommon.mk
+index 4ef691a..6f7d0ee 100644
+--- a/BoardConfigCommon.mk
++++ b/BoardConfigCommon.mk
+@@ -142,7 +142,7 @@ WITH_DEXPREOPT_BOOT_IMG_ONLY ?= true
+ 
+ # Display
+ BOARD_USES_ADRENO := true
+-NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
++NUM_FRAMEBUFFER_SURFACE_BUFFERS := 2
+ SF_VSYNC_EVENT_PHASE_OFFSET_NS := 2000000
+ SF_PRIMARY_DISPLAY_ORIENTATION := 90
+ TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS := 0x02000000U
+-- 
+2.7.4
+
