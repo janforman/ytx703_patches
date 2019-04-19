@@ -1,0 +1,42 @@
+From 3fe8f8585e35726ec0971b9aaee205b4643461aa Mon Sep 17 00:00:00 2001
+From: Jan Forman <info@janforman.com>
+Date: Fri, 19 Apr 2019 09:15:41 +0000
+Subject: [PATCH] Interactive Governor
+
+Change-Id: I137c9c4d3ab6972e9e97e718504bb00e6167d691
+---
+ configs/init/hw/init.qcom.power.rc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/configs/init/hw/init.qcom.power.rc b/configs/init/hw/init.qcom.power.rc
+index 111966a..cabd3b6 100644
+--- a/configs/init/hw/init.qcom.power.rc
++++ b/configs/init/hw/init.qcom.power.rc
+@@ -77,7 +77,7 @@ on enable-low-power
+     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "interactive"
+     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load 80
+     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate 20000
+-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/io_is_busy 0
++    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/io_is_busy 1
+     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time 40000
+     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 691200
+     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay 59000
+@@ -89,7 +89,7 @@ on enable-low-power
+     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor "interactive"
+     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load 85
+     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate 20000
+-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/io_is_busy 0
++    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/io_is_busy 1
+     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time 40000
+     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/sampling_down_factor 40000
+     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 883200
+@@ -214,5 +214,5 @@ on property:init.svc.recovery=running
+     trigger enable-low-power
+ 
+ on property:dev.bootcomplete=1
+-    setprop sys.io.scheduler "bfq"
++    setprop sys.io.scheduler "row"
+     trigger enable-low-power
+-- 
+2.7.4
+
