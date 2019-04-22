@@ -1,0 +1,28 @@
+From 21e424380af711a389b5dcf583ed9b054255b458 Mon Sep 17 00:00:00 2001
+From: Jan Forman <info@janforman.com>
+Date: Sun, 21 Apr 2019 23:33:02 +0000
+Subject: [PATCH] TCP-Westwood
+
+Change-Id: Ic311510d997d77a18ffaee2f4fc175d619cb6a82
+---
+ arch/arm64/configs/lineage_YTX703_defconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/configs/lineage_YTX703_defconfig b/arch/arm64/configs/lineage_YTX703_defconfig
+index 89e0ae4..021b036 100644
+--- a/arch/arm64/configs/lineage_YTX703_defconfig
++++ b/arch/arm64/configs/lineage_YTX703_defconfig
+@@ -516,8 +516,8 @@ CONFIG_INET_TCP_DIAG=y
+ # CONFIG_INET_UDP_DIAG is not set
+ CONFIG_INET_DIAG_DESTROY=y
+ # CONFIG_TCP_CONG_ADVANCED is not set
+-CONFIG_TCP_CONG_CUBIC=y
+-CONFIG_DEFAULT_TCP_CONG="cubic"
++CONFIG_TCP_CONG_WESTWOOD=y
++CONFIG_DEFAULT_TCP_CONG="westwood"
+ # CONFIG_TCP_MD5SIG is not set
+ CONFIG_IPV6=y
+ CONFIG_IPV6_PRIVACY=y
+-- 
+2.7.4
+

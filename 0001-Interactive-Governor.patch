@@ -1,30 +1,27 @@
-From db275ea6744aa3ec0e96252d836f94651d3ba17e Mon Sep 17 00:00:00 2001
+From 7d21b55556076457fd1f625ed5c13bf2eeba6c02 Mon Sep 17 00:00:00 2001
 From: Jan Forman <info@janforman.com>
-Date: Sun, 21 Apr 2019 16:29:38 +0000
+Date: Mon, 22 Apr 2019 08:53:44 +0000
 Subject: [PATCH] Interactive-Governor
 
-Change-Id: I1b859358b885bf4d952b942f1d75541ab9ffc0ed
+Change-Id: I273afdd3efe30608d6e5d37894b5a98c153c3a57
 ---
- configs/init/hw/init.qcom.power.rc | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ configs/init/hw/init.qcom.power.rc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/configs/init/hw/init.qcom.power.rc b/configs/init/hw/init.qcom.power.rc
-index 111966a..b3723db 100644
+index 111966a..33ce688 100644
 --- a/configs/init/hw/init.qcom.power.rc
 +++ b/configs/init/hw/init.qcom.power.rc
-@@ -77,9 +77,9 @@ on enable-low-power
+@@ -77,7 +77,7 @@ on enable-low-power
      write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "interactive"
      write /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load 80
      write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate 20000
 -    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/io_is_busy 0
 +    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/io_is_busy 1
      write /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time 40000
--    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 691200
-+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 400000
+     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 691200
      write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay 59000
-     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq 1305600
-     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads "1 691200:80"
-@@ -89,10 +89,10 @@ on enable-low-power
+@@ -89,7 +89,7 @@ on enable-low-power
      write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor "interactive"
      write /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load 85
      write /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate 20000
@@ -32,11 +29,7 @@ index 111966a..b3723db 100644
 +    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/io_is_busy 1
      write /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time 40000
      write /sys/devices/system/cpu/cpu4/cpufreq/interactive/sampling_down_factor 40000
--    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 883200
-+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 400000
-     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis 60000
-     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq 1382400
-     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay "19000 1382400:39000"
+     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 883200
 -- 
 2.7.4
 
