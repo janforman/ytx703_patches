@@ -1,23 +1,22 @@
-From 291b5c76a8f67dc210f6a8219c5840d5fe19b46f Mon Sep 17 00:00:00 2001
+From 87a07574521d9947d4124b3fd1c069fb60258fe9 Mon Sep 17 00:00:00 2001
 From: Jan Forman <info@janforman.com>
-Date: Thu, 25 Apr 2019 13:03:26 +0000
+Date: Fri, 26 Apr 2019 08:06:37 +0000
 Subject: [PATCH] exFAT-Support
 
-Change-Id: Ie570dd8ec0ec011e3d8ddea6d450635c583d57b8
+Change-Id: Iad75438a4e78379c4698bff90e07aed909f4c8fe
 ---
  arch/arm64/configs/lineage_YTX703_defconfig |    1 +
  fs/Kconfig                                  |    1 +
- fs/Makefile                                 |    1 +
  fs/exfat/Kconfig                            |   27 +
  fs/exfat/Makefile                           |   15 +
- fs/exfat/exfat.c                            | 5046 +++++++++++++++++++++++++++
+ fs/exfat/exfat.c                            | 5051 +++++++++++++++++++++++++++
  fs/exfat/exfat.h                            |  601 ++++
  fs/exfat/exfat_api.c                        |  480 +++
  fs/exfat/exfat_api.h                        |  166 +
- fs/exfat/exfat_blkdev.c                     |  155 +
- fs/exfat/exfat_blkdev.h                     |   46 +
- fs/exfat/exfat_cache.c                      |  740 ++++
- fs/exfat/exfat_cache.h                      |   63 +
+ fs/exfat/exfat_blkdev.c                     |  176 +
+ fs/exfat/exfat_blkdev.h                     |   47 +
+ fs/exfat/exfat_cache.c                      |  768 ++++
+ fs/exfat/exfat_cache.h                      |   66 +
  fs/exfat/exfat_config.h                     |   57 +
  fs/exfat/exfat_data.c                       |   40 +
  fs/exfat/exfat_data.h                       |   39 +
@@ -33,7 +32,7 @@ Change-Id: Ie570dd8ec0ec011e3d8ddea6d450635c583d57b8
  fs/exfat/exfat_upcase.c                     |  390 +++
  fs/exfat/exfat_version.h                    |    1 +
  fs/exfat/exfat_xattr.c                      |   37 +
- 28 files changed, 11699 insertions(+)
+ 27 files changed, 11756 insertions(+)
  create mode 100644 fs/exfat/Kconfig
  create mode 100644 fs/exfat/Makefile
  create mode 100644 fs/exfat/exfat.c
@@ -84,32 +83,20 @@ index ea41ab8..8003b9f 100644
  source "fs/ntfs/Kconfig"
  
  endmenu
-diff --git a/fs/Makefile b/fs/Makefile
-index 7594e22..645f528 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -77,6 +77,7 @@ obj-$(CONFIG_HUGETLBFS)		+= hugetlbfs/
- obj-$(CONFIG_CODA_FS)		+= coda/
- obj-$(CONFIG_MINIX_FS)		+= minix/
- obj-$(CONFIG_FAT_FS)		+= fat/
-+obj-$(CONFIG_EXFAT_FS)		+= exfat/
- obj-$(CONFIG_BFS_FS)		+= bfs/
- obj-$(CONFIG_ISO9660_FS)	+= isofs/
- obj-$(CONFIG_HFSPLUS_FS)	+= hfsplus/ # Before hfs to find wrapped HFS+
 diff --git a/fs/exfat/Kconfig b/fs/exfat/Kconfig
 new file mode 100644
-index 0000000..51ad35d
+index 0000000..7615cff
 --- /dev/null
 +++ b/fs/exfat/Kconfig
 @@ -0,0 +1,27 @@
 +config EXFAT_FS
-+	tristate
-+	default y
++	tristate "exFAT fs support"
++	default n
 +	select NLS
 +	select NLS_UTF8
 +	help
 +	  If you want to use the exFAT file systems, then you must say Y or M here
-+	  to inlucde exFAT support.
++	  to include exFAT support.
 +
 +config EXFAT_VIRTUAL_XATTR
 +	bool "Virtual xattr support for exFAT filesystem"
@@ -152,10 +139,10 @@ index 0000000..f4ffef4
 +
 diff --git a/fs/exfat/exfat.c b/fs/exfat/exfat.c
 new file mode 100644
-index 0000000..070ed7d
+index 0000000..162e337
 --- /dev/null
 +++ b/fs/exfat/exfat.c
-@@ -0,0 +1,5046 @@
+@@ -0,0 +1,5051 @@
 +/* Some of the source code in this file came from "linux/fs/fat/misc.c".  */
 +/*
 + *  linux/fs/fat/misc.c
@@ -3348,10 +3335,11 @@ index 0000000..070ed7d
 +
 +DENTRY_T *get_entry_in_dir(struct super_block *sb, CHAIN_T *p_dir, INT32 entry, UINT32 *sector)
 +{
++	FS_INFO_T *p_fs = &(EXFAT_SB(sb)->fs_info);
++	UINT32 dentries_per_page = PAGE_SIZE >> DENTRY_SIZE_BITS;
 +	INT32 off;
 +	UINT32 sec;
 +	UINT8 *buf;
-+	FS_INFO_T *p_fs = &(EXFAT_SB(sb)->fs_info);
 +
 +	if (p_fs->dev_ejected)
 +		return NULL;
@@ -3360,6 +3348,10 @@ index 0000000..070ed7d
 +
 +	if (find_location(sb, p_dir, entry, &sec, &off) != FFS_SUCCESS)
 +		return NULL;
++
++	/* if first entry, then do read-ahead */
++	if (!(entry & (dentries_per_page - 1)))
++		buf_cache_readahead(sb, sec);
 +
 +	buf = buf_getblk(sb, sec);
 +
@@ -6469,10 +6461,10 @@ index 0000000..c0752fc
 +#endif
 diff --git a/fs/exfat/exfat_blkdev.c b/fs/exfat/exfat_blkdev.c
 new file mode 100644
-index 0000000..51f7109
+index 0000000..752ae28
 --- /dev/null
 +++ b/fs/exfat/exfat_blkdev.c
-@@ -0,0 +1,155 @@
+@@ -0,0 +1,176 @@
 +/*
 + *  Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
 + *
@@ -6628,12 +6620,33 @@ index 0000000..51f7109
 +
 +	return sync_blockdev(sb->s_bdev);
 +}
++
++INT32 bdev_reada(struct super_block *sb, UINT32 secno, UINT32 num_secs)
++{
++	BD_INFO_T *p_bd = &(EXFAT_SB(sb)->bd_info);
++	UINT32 sects_per_page = (PAGE_SIZE >> sb->s_blocksize_bits);
++	struct blk_plug plug;
++	UINT32 i;
++
++	if (!p_bd->opened)
++		return (FFS_MEDIAERR);
++
++	blk_start_plug(&plug);
++	for (i = 0; i < num_secs; i++) {
++		if (i && !(i & (sects_per_page - 1)))
++			blk_flush_plug_list(&plug, false);
++		sb_breadahead(sb, secno + i);
++	}
++	blk_finish_plug(&plug);
++
++	return 0;
++}
 diff --git a/fs/exfat/exfat_blkdev.h b/fs/exfat/exfat_blkdev.h
 new file mode 100644
-index 0000000..3029966
+index 0000000..2eba289
 --- /dev/null
 +++ b/fs/exfat/exfat_blkdev.h
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,47 @@
 +/*
 + *  Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
 + *
@@ -6676,16 +6689,17 @@ index 0000000..3029966
 +	INT32 bdev_read(struct super_block *sb, UINT32 secno, struct buffer_head **bh, UINT32 num_secs, INT32 read);
 +	INT32 bdev_write(struct super_block *sb, UINT32 secno, struct buffer_head *bh, UINT32 num_secs, INT32 sync);
 +	INT32 bdev_sync(struct super_block *sb);
++	INT32 bdev_reada(struct super_block *sb, UINT32 secno, UINT32 num_secs);
 +#ifdef __cplusplus
 +}
 +#endif
 +#endif
 diff --git a/fs/exfat/exfat_cache.c b/fs/exfat/exfat_cache.c
 new file mode 100644
-index 0000000..82f90ab
+index 0000000..36caae1
 --- /dev/null
 +++ b/fs/exfat/exfat_cache.c
-@@ -0,0 +1,740 @@
+@@ -0,0 +1,768 @@
 +/*
 + *  Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
 + *
@@ -7426,12 +7440,40 @@ index 0000000..82f90ab
 +	bp->next->prev = bp->prev;
 +	push_to_lru(bp, list);
 +}
++
++INT32 buf_cache_readahead(struct super_block * sb, UINT32 sec)
++{
++	FS_INFO_T *p_fs = &(EXFAT_SB(sb)->fs_info);
++	struct buffer_head *bh;
++	UINT32 max_ra_count = DCACHE_MAX_RA_SIZE >> sb->s_blocksize_bits;
++	UINT32 page_ra_count = PAGE_SIZE >> sb->s_blocksize_bits;
++	UINT32 adj_ra_count = max(p_fs->sectors_per_clu, page_ra_count);
++	UINT32 ra_count = min(adj_ra_count, max_ra_count);
++
++	if (p_fs->sectors_per_clu == 1)
++		return 0;
++
++	if (sec < p_fs->data_start_sector)
++		return (FFS_MEDIAERR);
++
++	/* Not sector aligned with ra_count, resize ra_count to page size */
++	if ((sec - p_fs->data_start_sector) & (ra_count - 1))
++		ra_count = page_ra_count;
++
++	bh = sb_find_get_block(sb, sec);
++	if (!bh || !buffer_uptodate(bh))
++		bdev_reada(sb, sec, ra_count);
++
++	brelse(bh);
++
++	return 0;
++}
 diff --git a/fs/exfat/exfat_cache.h b/fs/exfat/exfat_cache.h
 new file mode 100644
-index 0000000..7674509
+index 0000000..ce4af7d
 --- /dev/null
 +++ b/fs/exfat/exfat_cache.h
-@@ -0,0 +1,63 @@
+@@ -0,0 +1,66 @@
 +/*
 + *  Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
 + *
@@ -7463,6 +7505,8 @@ index 0000000..7674509
 +#define LOCKBIT                 0x01
 +#define DIRTYBIT                0x02
 +
++#define DCACHE_MAX_RA_SIZE	(128*1024)
++
 +	typedef struct __BUF_CACHE_T {
 +		struct __BUF_CACHE_T *next;
 +		struct __BUF_CACHE_T *prev;
@@ -7489,6 +7533,7 @@ index 0000000..7674509
 +	void   buf_release(struct super_block *sb, UINT32 sec);
 +	void   buf_release_all(struct super_block *sb);
 +	void   buf_sync(struct super_block *sb);
++	INT32 buf_cache_readahead(struct super_block * sb, UINT32 sec);
 +
 +#ifdef __cplusplus
 +}
@@ -11894,11 +11939,11 @@ index 0000000..7378a15
 +};
 diff --git a/fs/exfat/exfat_version.h b/fs/exfat/exfat_version.h
 new file mode 100644
-index 0000000..f3a194d
+index 0000000..872baa4
 --- /dev/null
 +++ b/fs/exfat/exfat_version.h
 @@ -0,0 +1 @@
-+#define EXFAT_VERSION	"1.2.22"
++#define EXFAT_VERSION	"1.2.24"
 diff --git a/fs/exfat/exfat_xattr.c b/fs/exfat/exfat_xattr.c
 new file mode 100644
 index 0000000..ec51246
