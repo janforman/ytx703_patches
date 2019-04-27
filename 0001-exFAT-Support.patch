@@ -1,37 +1,37 @@
-From 87a07574521d9947d4124b3fd1c069fb60258fe9 Mon Sep 17 00:00:00 2001
+From cdeb00c60e7363bbf891fa8f8ff887269a36044b Mon Sep 17 00:00:00 2001
 From: Jan Forman <info@janforman.com>
-Date: Fri, 26 Apr 2019 08:06:37 +0000
+Date: Sat, 27 Apr 2019 19:57:58 +0000
 Subject: [PATCH] exFAT-Support
 
-Change-Id: Iad75438a4e78379c4698bff90e07aed909f4c8fe
+Change-Id: I5ead8ed86954c6712ebd7d508172a77fd162a6df
 ---
- arch/arm64/configs/lineage_YTX703_defconfig |    1 +
- fs/Kconfig                                  |    1 +
- fs/exfat/Kconfig                            |   27 +
- fs/exfat/Makefile                           |   15 +
- fs/exfat/exfat.c                            | 5051 +++++++++++++++++++++++++++
- fs/exfat/exfat.h                            |  601 ++++
- fs/exfat/exfat_api.c                        |  480 +++
- fs/exfat/exfat_api.h                        |  166 +
- fs/exfat/exfat_blkdev.c                     |  176 +
- fs/exfat/exfat_blkdev.h                     |   47 +
- fs/exfat/exfat_cache.c                      |  768 ++++
- fs/exfat/exfat_cache.h                      |   66 +
- fs/exfat/exfat_config.h                     |   57 +
- fs/exfat/exfat_data.c                       |   40 +
- fs/exfat/exfat_data.h                       |   39 +
- fs/exfat/exfat_global.c                     |  119 +
- fs/exfat/exfat_global.h                     |  132 +
- fs/exfat/exfat_nls.c                        |  347 ++
- fs/exfat/exfat_nls.h                        |   68 +
- fs/exfat/exfat_oal.c                        |  147 +
- fs/exfat/exfat_oal.h                        |   53 +
- fs/exfat/exfat_part.h                       |   54 +
- fs/exfat/exfat_super.c                      | 2709 ++++++++++++++
- fs/exfat/exfat_super.h                      |  164 +
- fs/exfat/exfat_upcase.c                     |  390 +++
- fs/exfat/exfat_version.h                    |    1 +
- fs/exfat/exfat_xattr.c                      |   37 +
+ fs/Kconfig               |    1 +
+ fs/Makefile              |    1 +
+ fs/exfat/Kconfig         |   27 +
+ fs/exfat/Makefile        |   15 +
+ fs/exfat/exfat.c         | 5051 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/exfat/exfat.h         |  601 ++++++
+ fs/exfat/exfat_api.c     |  480 +++++
+ fs/exfat/exfat_api.h     |  166 ++
+ fs/exfat/exfat_blkdev.c  |  176 ++
+ fs/exfat/exfat_blkdev.h  |   47 +
+ fs/exfat/exfat_cache.c   |  768 +++++++
+ fs/exfat/exfat_cache.h   |   66 +
+ fs/exfat/exfat_config.h  |   57 +
+ fs/exfat/exfat_data.c    |   40 +
+ fs/exfat/exfat_data.h    |   39 +
+ fs/exfat/exfat_global.c  |  119 ++
+ fs/exfat/exfat_global.h  |  132 ++
+ fs/exfat/exfat_nls.c     |  347 ++++
+ fs/exfat/exfat_nls.h     |   68 +
+ fs/exfat/exfat_oal.c     |  147 ++
+ fs/exfat/exfat_oal.h     |   53 +
+ fs/exfat/exfat_part.h    |   54 +
+ fs/exfat/exfat_super.c   | 2709 +++++++++++++++++++++++++
+ fs/exfat/exfat_super.h   |  164 ++
+ fs/exfat/exfat_upcase.c  |  390 ++++
+ fs/exfat/exfat_version.h |    1 +
+ fs/exfat/exfat_xattr.c   |   37 +
  27 files changed, 11756 insertions(+)
  create mode 100644 fs/exfat/Kconfig
  create mode 100644 fs/exfat/Makefile
@@ -59,18 +59,6 @@ Change-Id: Iad75438a4e78379c4698bff90e07aed909f4c8fe
  create mode 100644 fs/exfat/exfat_version.h
  create mode 100644 fs/exfat/exfat_xattr.c
 
-diff --git a/arch/arm64/configs/lineage_YTX703_defconfig b/arch/arm64/configs/lineage_YTX703_defconfig
-index 89e0ae4..8a6458f 100644
---- a/arch/arm64/configs/lineage_YTX703_defconfig
-+++ b/arch/arm64/configs/lineage_YTX703_defconfig
-@@ -3704,6 +3704,7 @@ CONFIG_FAT_FS=y
- CONFIG_VFAT_FS=y
- CONFIG_FAT_DEFAULT_CODEPAGE=437
- CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
-+CONFIG_EXFAT_FS=y
- # CONFIG_NTFS_FS is not set
- 
- #
 diff --git a/fs/Kconfig b/fs/Kconfig
 index ea41ab8..8003b9f 100644
 --- a/fs/Kconfig
@@ -83,6 +71,18 @@ index ea41ab8..8003b9f 100644
  source "fs/ntfs/Kconfig"
  
  endmenu
+diff --git a/fs/Makefile b/fs/Makefile
+index 7594e22..645f528 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -77,6 +77,7 @@ obj-$(CONFIG_HUGETLBFS)		+= hugetlbfs/
+ obj-$(CONFIG_CODA_FS)		+= coda/
+ obj-$(CONFIG_MINIX_FS)		+= minix/
+ obj-$(CONFIG_FAT_FS)		+= fat/
++obj-$(CONFIG_EXFAT_FS)		+= exfat/
+ obj-$(CONFIG_BFS_FS)		+= bfs/
+ obj-$(CONFIG_ISO9660_FS)	+= isofs/
+ obj-$(CONFIG_HFSPLUS_FS)	+= hfsplus/ # Before hfs to find wrapped HFS+
 diff --git a/fs/exfat/Kconfig b/fs/exfat/Kconfig
 new file mode 100644
 index 0000000..7615cff
