@@ -1,38 +1,39 @@
-From cdeb00c60e7363bbf891fa8f8ff887269a36044b Mon Sep 17 00:00:00 2001
+From e5a444474bedcb924fffaf9fe7795cf6c2317bd5 Mon Sep 17 00:00:00 2001
 From: Jan Forman <info@janforman.com>
-Date: Sat, 27 Apr 2019 19:57:58 +0000
+Date: Sat, 27 Apr 2019 20:07:04 +0000
 Subject: [PATCH] exFAT-Support
 
-Change-Id: I5ead8ed86954c6712ebd7d508172a77fd162a6df
+Change-Id: I077a58588da8bae7774f46ed42024defc3567fb4
 ---
- fs/Kconfig               |    1 +
- fs/Makefile              |    1 +
- fs/exfat/Kconfig         |   27 +
- fs/exfat/Makefile        |   15 +
- fs/exfat/exfat.c         | 5051 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/exfat/exfat.h         |  601 ++++++
- fs/exfat/exfat_api.c     |  480 +++++
- fs/exfat/exfat_api.h     |  166 ++
- fs/exfat/exfat_blkdev.c  |  176 ++
- fs/exfat/exfat_blkdev.h  |   47 +
- fs/exfat/exfat_cache.c   |  768 +++++++
- fs/exfat/exfat_cache.h   |   66 +
- fs/exfat/exfat_config.h  |   57 +
- fs/exfat/exfat_data.c    |   40 +
- fs/exfat/exfat_data.h    |   39 +
- fs/exfat/exfat_global.c  |  119 ++
- fs/exfat/exfat_global.h  |  132 ++
- fs/exfat/exfat_nls.c     |  347 ++++
- fs/exfat/exfat_nls.h     |   68 +
- fs/exfat/exfat_oal.c     |  147 ++
- fs/exfat/exfat_oal.h     |   53 +
- fs/exfat/exfat_part.h    |   54 +
- fs/exfat/exfat_super.c   | 2709 +++++++++++++++++++++++++
- fs/exfat/exfat_super.h   |  164 ++
- fs/exfat/exfat_upcase.c  |  390 ++++
- fs/exfat/exfat_version.h |    1 +
- fs/exfat/exfat_xattr.c   |   37 +
- 27 files changed, 11756 insertions(+)
+ arch/arm64/configs/lineage_YTX703_defconfig |    1 +
+ fs/Kconfig                                  |    1 +
+ fs/Makefile                                 |    1 +
+ fs/exfat/Kconfig                            |   27 +
+ fs/exfat/Makefile                           |   15 +
+ fs/exfat/exfat.c                            | 5051 +++++++++++++++++++++++++++
+ fs/exfat/exfat.h                            |  601 ++++
+ fs/exfat/exfat_api.c                        |  480 +++
+ fs/exfat/exfat_api.h                        |  166 +
+ fs/exfat/exfat_blkdev.c                     |  176 +
+ fs/exfat/exfat_blkdev.h                     |   47 +
+ fs/exfat/exfat_cache.c                      |  768 ++++
+ fs/exfat/exfat_cache.h                      |   66 +
+ fs/exfat/exfat_config.h                     |   57 +
+ fs/exfat/exfat_data.c                       |   40 +
+ fs/exfat/exfat_data.h                       |   39 +
+ fs/exfat/exfat_global.c                     |  119 +
+ fs/exfat/exfat_global.h                     |  132 +
+ fs/exfat/exfat_nls.c                        |  347 ++
+ fs/exfat/exfat_nls.h                        |   68 +
+ fs/exfat/exfat_oal.c                        |  147 +
+ fs/exfat/exfat_oal.h                        |   53 +
+ fs/exfat/exfat_part.h                       |   54 +
+ fs/exfat/exfat_super.c                      | 2709 ++++++++++++++
+ fs/exfat/exfat_super.h                      |  164 +
+ fs/exfat/exfat_upcase.c                     |  390 +++
+ fs/exfat/exfat_version.h                    |    1 +
+ fs/exfat/exfat_xattr.c                      |   37 +
+ 28 files changed, 11757 insertions(+)
  create mode 100644 fs/exfat/Kconfig
  create mode 100644 fs/exfat/Makefile
  create mode 100644 fs/exfat/exfat.c
@@ -59,6 +60,18 @@ Change-Id: I5ead8ed86954c6712ebd7d508172a77fd162a6df
  create mode 100644 fs/exfat/exfat_version.h
  create mode 100644 fs/exfat/exfat_xattr.c
 
+diff --git a/arch/arm64/configs/lineage_YTX703_defconfig b/arch/arm64/configs/lineage_YTX703_defconfig
+index 89e0ae4..8a6458f 100644
+--- a/arch/arm64/configs/lineage_YTX703_defconfig
++++ b/arch/arm64/configs/lineage_YTX703_defconfig
+@@ -3704,6 +3704,7 @@ CONFIG_FAT_FS=y
+ CONFIG_VFAT_FS=y
+ CONFIG_FAT_DEFAULT_CODEPAGE=437
+ CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
++CONFIG_EXFAT_FS=y
+ # CONFIG_NTFS_FS is not set
+ 
+ #
 diff --git a/fs/Kconfig b/fs/Kconfig
 index ea41ab8..8003b9f 100644
 --- a/fs/Kconfig
