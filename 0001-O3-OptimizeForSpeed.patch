@@ -1,0 +1,51 @@
+From 246f30be7467b00657af3f06640e7ccd78af00e3 Mon Sep 17 00:00:00 2001
+From: Jan Forman <info@janforman.com>
+Date: Tue, 30 Apr 2019 22:26:38 +0000
+Subject: [PATCH] O3-OptimizeForSpeed
+
+Change-Id: I88471a14f1a895d2234a1c9f13ed84af2c17664a
+---
+ Makefile                                    | 6 +++---
+ arch/arm64/configs/lineage_YTX703_defconfig | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index aac0769..4ea7753 100644
+--- a/Makefile
++++ b/Makefile
+@@ -241,8 +241,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
+ 
+ HOSTCC       = gcc
+ HOSTCXX      = g++
+-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
+-HOSTCXXFLAGS = -O2
++HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O3 -fomit-frame-pointer -std=gnu89
++HOSTCXXFLAGS = -O3
+ 
+ # Decide whether to build built-in, modular, or both.
+ # Normally, just do built-in.
+@@ -580,7 +580,7 @@ all: vmlinux
+ ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+ KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
+ else
+-KBUILD_CFLAGS	+= -O2
++KBUILD_CFLAGS	+= -O3 $(call cc-disable-warning,maybe-uninitialized,)
+ endif
+ 
+ include $(srctree)/arch/$(SRCARCH)/Makefile
+diff --git a/arch/arm64/configs/lineage_YTX703_defconfig b/arch/arm64/configs/lineage_YTX703_defconfig
+index 89e0ae4..511d062 100644
+--- a/arch/arm64/configs/lineage_YTX703_defconfig
++++ b/arch/arm64/configs/lineage_YTX703_defconfig
+@@ -132,7 +132,7 @@ CONFIG_RD_BZIP2=y
+ CONFIG_RD_LZMA=y
+ # CONFIG_RD_XZ is not set
+ # CONFIG_RD_LZO is not set
+-CONFIG_CC_OPTIMIZE_FOR_SIZE=y
++CONFIG_CC_OPTIMIZE_FOR_SIZE=n
+ CONFIG_SYSCTL=y
+ CONFIG_ANON_INODES=y
+ CONFIG_HAVE_UID16=y
+-- 
+2.7.4
+
