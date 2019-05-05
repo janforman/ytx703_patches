@@ -1,16 +1,16 @@
-From 78abcc5c95e426ab592032ad4e66d9a869cd1e18 Mon Sep 17 00:00:00 2001
+From b80026a71cf3ae47e7936a317bc1f203a6295910 Mon Sep 17 00:00:00 2001
 From: Jan Forman <info@janforman.com>
-Date: Thu, 25 Apr 2019 16:40:02 +0000
+Date: Sun, 5 May 2019 21:43:34 +0000
 Subject: [PATCH] Force-SBC-HD
 
-Change-Id: I5e9bf1c7c7f135d0d1df3cf28b22d5de73025a47
+Change-Id: Id518a5da5a71f5bd33042de69a307a9ec05477e7
 ---
- stack/a2dp/a2dp_sbc.cc         | 14 +++++++-------
+ stack/a2dp/a2dp_sbc.cc         | 11 +++--------
  stack/a2dp/a2dp_sbc_encoder.cc |  2 +-
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
 diff --git a/stack/a2dp/a2dp_sbc.cc b/stack/a2dp/a2dp_sbc.cc
-index bef5bf9..761cc60 100644
+index bef5bf9..87048c2 100644
 --- a/stack/a2dp/a2dp_sbc.cc
 +++ b/stack/a2dp/a2dp_sbc.cc
 @@ -56,7 +56,7 @@ typedef struct {
@@ -27,34 +27,25 @@ index bef5bf9..761cc60 100644
  const tA2DP_SBC_CIE a2dp_sbc_default_config = {
      A2DP_SBC_IE_SAMP_FREQ_44,          /* samp_freq */
 -    A2DP_SBC_IE_CH_MD_JOINT,           /* ch_mode */
-+    A2DP_SBC_IE_CH_MD_DUAL,           /* ch_mode */
++    A2DP_SBC_IE_CH_MD_DUAL,            /* ch_mode */
      A2DP_SBC_IE_BLOCKS_16,             /* block_len */
      A2DP_SBC_IE_SUBBAND_8,             /* num_subbands */
      A2DP_SBC_IE_ALLOC_MD_L,            /* alloc_method */
-@@ -976,6 +976,11 @@ static bool select_audio_bits_per_sample(
+@@ -976,13 +976,8 @@ static bool select_audio_bits_per_sample(
  //
  static bool select_best_channel_mode(uint8_t ch_mode, tA2DP_SBC_CIE* p_result,
                                       btav_a2dp_codec_config_t* p_codec_config) {
-+  if (ch_mode & A2DP_SBC_IE_CH_MD_DUAL) {
-+    p_result->ch_mode = A2DP_SBC_IE_CH_MD_DUAL;
-+    p_codec_config->channel_mode = BTAV_A2DP_CODEC_CHANNEL_MODE_STEREO;
-+    return true;
-+  }
-   if (ch_mode & A2DP_SBC_IE_CH_MD_JOINT) {
-     p_result->ch_mode = A2DP_SBC_IE_CH_MD_JOINT;
-     p_codec_config->channel_mode = BTAV_A2DP_CODEC_CHANNEL_MODE_STEREO;
-@@ -986,11 +991,6 @@ static bool select_best_channel_mode(uint8_t ch_mode, tA2DP_SBC_CIE* p_result,
-     p_codec_config->channel_mode = BTAV_A2DP_CODEC_CHANNEL_MODE_STEREO;
-     return true;
-   }
--  if (ch_mode & A2DP_SBC_IE_CH_MD_DUAL) {
--    p_result->ch_mode = A2DP_SBC_IE_CH_MD_DUAL;
+-  if (ch_mode & A2DP_SBC_IE_CH_MD_JOINT) {
+-    p_result->ch_mode = A2DP_SBC_IE_CH_MD_JOINT;
 -    p_codec_config->channel_mode = BTAV_A2DP_CODEC_CHANNEL_MODE_STEREO;
 -    return true;
 -  }
-   if (ch_mode & A2DP_SBC_IE_CH_MD_MONO) {
-     p_result->ch_mode = A2DP_SBC_IE_CH_MD_MONO;
-     p_codec_config->channel_mode = BTAV_A2DP_CODEC_CHANNEL_MODE_MONO;
+   if (ch_mode & A2DP_SBC_IE_CH_MD_STEREO) {
+-    p_result->ch_mode = A2DP_SBC_IE_CH_MD_STEREO;
++    p_result->ch_mode = A2DP_SBC_IE_CH_MD_DUAL;
+     p_codec_config->channel_mode = BTAV_A2DP_CODEC_CHANNEL_MODE_STEREO;
+     return true;
+   }
 diff --git a/stack/a2dp/a2dp_sbc_encoder.cc b/stack/a2dp/a2dp_sbc_encoder.cc
 index bd09989..79a697d 100644
 --- a/stack/a2dp/a2dp_sbc_encoder.cc
