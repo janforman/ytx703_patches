@@ -1,9 +1,9 @@
-From a086f3bf896ca2aa189280626c1b0d5af8503161 Mon Sep 17 00:00:00 2001
+From 29268a08d856ee2c4b12b2d880bcad92ff4ff96d Mon Sep 17 00:00:00 2001
 From: Jan Forman <info@janforman.com>
-Date: Wed, 8 May 2019 13:05:50 +0000
+Date: Thu, 9 May 2019 16:55:25 +0000
 Subject: [PATCH] WFD-Add
 
-Change-Id: I869e8128c383fbe30d69a7bc0b6d0ca08bea4512
+Change-Id: I26be9cc02a166a91458403df9ceb0997995780b3
 ---
  include/media/IHDCP.h                              |    1 +
  media/libmedia/Android.bp                          |    2 +
@@ -31,7 +31,7 @@ Change-Id: I869e8128c383fbe30d69a7bc0b6d0ca08bea4512
  media/libstagefright/wifi-display/MediaSender.h    |  132 ++
  media/libstagefright/wifi-display/Parameters.cpp   |   92 ++
  media/libstagefright/wifi-display/Parameters.h     |   41 +
- media/libstagefright/wifi-display/VideoFormats.cpp |  550 +++++++
+ media/libstagefright/wifi-display/VideoFormats.cpp |  549 +++++++
  media/libstagefright/wifi-display/VideoFormats.h   |  125 ++
  media/libstagefright/wifi-display/rtp/RTPBase.h    |   49 +
  .../libstagefright/wifi-display/rtp/RTPSender.cpp  |  809 +++++++++
@@ -49,7 +49,7 @@ Change-Id: I869e8128c383fbe30d69a7bc0b6d0ca08bea4512
  .../wifi-display/source/WifiDisplaySource.cpp      | 1737 ++++++++++++++++++++
  .../wifi-display/source/WifiDisplaySource.h        |  278 ++++
  .../service/AudioPolicyInterfaceImpl.cpp           |    6 +-
- 44 files changed, 11261 insertions(+), 9 deletions(-)
+ 44 files changed, 11260 insertions(+), 9 deletions(-)
  create mode 120000 include/media/IHDCP.h
  create mode 100644 media/libmedia/IHDCP.cpp
  create mode 100644 media/libmedia/include/media/IHDCP.h
@@ -3953,10 +3953,10 @@ index 0000000..a5e787e
 +}  // namespace android
 diff --git a/media/libstagefright/wifi-display/VideoFormats.cpp b/media/libstagefright/wifi-display/VideoFormats.cpp
 new file mode 100644
-index 0000000..dbc511c
+index 0000000..7b7e8a1
 --- /dev/null
 +++ b/media/libstagefright/wifi-display/VideoFormats.cpp
-@@ -0,0 +1,550 @@
+@@ -0,0 +1,549 @@
 +/*
 + * Copyright 2013, The Android Open Source Project
 + *
@@ -4004,11 +4004,11 @@ index 0000000..dbc511c
 +        { 1920, 1080, 50, true, 0, 0},
 +        { 1280, 720, 24, false, 0, 0},
 +        { 1920, 1080, 24, false, 0, 0},
-+        { 0, 0, 0, false, 0, 0},
-+        { 0, 0, 0, false, 0, 0},
-+        { 0, 0, 0, false, 0, 0},
-+        { 0, 0, 0, false, 0, 0},
-+        { 0, 0, 0, false, 0, 0},
++        { 3840, 2160, 24, false, 0, 0},
++        { 3840, 2160, 25, false, 0, 0},
++        { 3840, 2160, 30, false, 0, 0},
++        { 3840, 2160, 50, false, 0, 0},
++        { 3840, 2160, 60, false, 0, 0},
 +        { 0, 0, 0, false, 0, 0},
 +        { 0, 0, 0, false, 0, 0},
 +        { 0, 0, 0, false, 0, 0},
@@ -4052,8 +4052,7 @@ index 0000000..dbc511c
 +        { 1680, 1050, 60, false, 0, 0},
 +        { 1920, 1200, 30, false, 0, 0},
 +        { 1920, 1200, 60, false, 0, 0},
-+        { 0, 0, 0, false, 0, 0},
-+        { 0, 0, 0, false, 0, 0},
++        { 2560, 1600, 30, false, 0, 0},
 +    },
 +    {
 +        // HH Resolutions
@@ -4099,7 +4098,7 @@ index 0000000..dbc511c
 +        mResolutionEnabled[i] = 0;
 +    }
 +
-+    setNativeResolution(RESOLUTION_CEA, 0);  // default to 640x480 p60
++    setNativeResolution(RESOLUTION_CEA, 7);  // default to 1920x1080x30
 +}
 +
 +void VideoFormats::setNativeResolution(ResolutionType type, size_t index) {
@@ -5635,7 +5634,7 @@ index 0000000..bedfd01
 +#endif  // RTP_SENDER_H_
 diff --git a/media/libstagefright/wifi-display/source/Converter.cpp b/media/libstagefright/wifi-display/source/Converter.cpp
 new file mode 100644
-index 0000000..d5c7ae2
+index 0000000..7382174
 --- /dev/null
 +++ b/media/libstagefright/wifi-display/source/Converter.cpp
 @@ -0,0 +1,826 @@
@@ -5802,7 +5801,7 @@ index 0000000..d5c7ae2
 +    }
 +
 +    int32_t audioBitrate = GetInt32Property("media.wfd.audio-bitrate", 128000);
-+    int32_t videoBitrate = GetInt32Property("media.wfd.video-bitrate", 5000000);
++    int32_t videoBitrate = GetInt32Property("media.wfd.video-bitrate", 7000000);
 +    mPrevVideoBitrate = videoBitrate;
 +
 +    ALOGI("using audio bitrate of %d bps, video bitrate of %d bps",
@@ -6360,7 +6359,7 @@ index 0000000..d5c7ae2
 +#if 0
 +            if (mIsVideo) {
 +                int32_t videoBitrate = GetInt32Property(
-+                        "media.wfd.video-bitrate", 5000000);
++                        "media.wfd.video-bitrate", 7000000);
 +
 +                setVideoBitrate(videoBitrate);
 +            }
