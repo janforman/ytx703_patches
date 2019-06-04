@@ -1,9 +1,9 @@
-From 29268a08d856ee2c4b12b2d880bcad92ff4ff96d Mon Sep 17 00:00:00 2001
+From 1a013d8986a03b2fa3e06cfd991311655fb656bc Mon Sep 17 00:00:00 2001
 From: Jan Forman <info@janforman.com>
-Date: Thu, 9 May 2019 16:55:25 +0000
+Date: Thu, 9 May 2019 19:07:13 +0000
 Subject: [PATCH] WFD-Add
 
-Change-Id: I26be9cc02a166a91458403df9ceb0997995780b3
+Change-Id: I7756db3d9e942e39a6401c609ea5f66db5e5ad87
 ---
  include/media/IHDCP.h                              |    1 +
  media/libmedia/Android.bp                          |    2 +
@@ -3953,7 +3953,7 @@ index 0000000..a5e787e
 +}  // namespace android
 diff --git a/media/libstagefright/wifi-display/VideoFormats.cpp b/media/libstagefright/wifi-display/VideoFormats.cpp
 new file mode 100644
-index 0000000..7b7e8a1
+index 0000000..a2c8e74
 --- /dev/null
 +++ b/media/libstagefright/wifi-display/VideoFormats.cpp
 @@ -0,0 +1,549 @@
@@ -4004,11 +4004,11 @@ index 0000000..7b7e8a1
 +        { 1920, 1080, 50, true, 0, 0},
 +        { 1280, 720, 24, false, 0, 0},
 +        { 1920, 1080, 24, false, 0, 0},
-+        { 3840, 2160, 24, false, 0, 0},
-+        { 3840, 2160, 25, false, 0, 0},
-+        { 3840, 2160, 30, false, 0, 0},
-+        { 3840, 2160, 50, false, 0, 0},
-+        { 3840, 2160, 60, false, 0, 0},
++        { 0, 0, 0, false, 0, 0},
++        { 0, 0, 0, false, 0, 0},
++        { 0, 0, 0, false, 0, 0},
++        { 0, 0, 0, false, 0, 0},
++        { 0, 0, 0, false, 0, 0},
 +        { 0, 0, 0, false, 0, 0},
 +        { 0, 0, 0, false, 0, 0},
 +        { 0, 0, 0, false, 0, 0},
