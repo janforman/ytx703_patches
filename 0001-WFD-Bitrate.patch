@@ -1,0 +1,35 @@
+From 79b2c640d701d7b00f92aa52c69c90aab791d5d5 Mon Sep 17 00:00:00 2001
+From: Jan Forman <info@janforman.com>
+Date: Fri, 4 Oct 2019 07:53:24 +0000
+Subject: [PATCH] WFD-Bitrate
+
+Change-Id: Ic95392f872cf73fe5a36ed6c7047af15fd1eab0b
+---
+ media/libstagefright/wifi-display/source/Converter.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/media/libstagefright/wifi-display/source/Converter.cpp b/media/libstagefright/wifi-display/source/Converter.cpp
+index d5c7ae2..27990a5 100644
+--- a/media/libstagefright/wifi-display/source/Converter.cpp
++++ b/media/libstagefright/wifi-display/source/Converter.cpp
+@@ -161,7 +161,7 @@ status_t Converter::initEncoder() {
+     }
+ 
+     int32_t audioBitrate = GetInt32Property("media.wfd.audio-bitrate", 128000);
+-    int32_t videoBitrate = GetInt32Property("media.wfd.video-bitrate", 5000000);
++    int32_t videoBitrate = GetInt32Property("media.wfd.video-bitrate", 8000000);
+     mPrevVideoBitrate = videoBitrate;
+ 
+     ALOGI("using audio bitrate of %d bps, video bitrate of %d bps",
+@@ -719,7 +719,7 @@ status_t Converter::doMoreWork() {
+ #if 0
+             if (mIsVideo) {
+                 int32_t videoBitrate = GetInt32Property(
+-                        "media.wfd.video-bitrate", 5000000);
++                        "media.wfd.video-bitrate", 8000000);
+ 
+                 setVideoBitrate(videoBitrate);
+             }
+-- 
+2.7.4
+
