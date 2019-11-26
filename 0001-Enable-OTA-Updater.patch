@@ -1,0 +1,26 @@
+From 61898b9499187bbb844fc1ffb1951ad47546e50d Mon Sep 17 00:00:00 2001
+From: Jan Forman <info@janforman.com>
+Date: Tue, 26 Nov 2019 14:19:16 +0000
+Subject: [PATCH] Enable OTA Updater
+
+Change-Id: Icfafa93aa8b4f9cccb4bf6efc2cfde912f85d44c
+---
+ system.prop | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/system.prop b/system.prop
+index 4a0ac2a..c106b15 100644
+--- a/system.prop
++++ b/system.prop
+@@ -79,6 +79,8 @@ lockscreen.rot_override=true
+ # used by libmm-dspp-utils.so
+ ro.qualcomm.cabl=0
+ 
++# OTA
++lineage.updater.uri=https://janforman.org/lineageos/?device={device}
+ 
+ # FRP
+ ro.frp.pst=/dev/block/bootdevice/by-name/config
+-- 
+2.7.4
+
