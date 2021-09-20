@@ -1,15 +1,16 @@
-From 79b2c640d701d7b00f92aa52c69c90aab791d5d5 Mon Sep 17 00:00:00 2001
+From 407754014fb4581221bb44b7d79e6fbae27623f3 Mon Sep 17 00:00:00 2001
 From: Jan Forman <info@janforman.com>
-Date: Fri, 4 Oct 2019 07:53:24 +0000
+Date: Fri, 17 Sep 2021 17:09:10 +0000
 Subject: [PATCH] WFD-Bitrate
 
-Change-Id: Ic95392f872cf73fe5a36ed6c7047af15fd1eab0b
+Change-Id: I2141deaf7adb10dae205b4f8f36a429dca6bad31
 ---
- media/libstagefright/wifi-display/source/Converter.cpp | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ media/libstagefright/wifi-display/source/Converter.cpp      | 4 ++--
+ .../wifi-display/source/WifiDisplaySource.cpp               | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/media/libstagefright/wifi-display/source/Converter.cpp b/media/libstagefright/wifi-display/source/Converter.cpp
-index d5c7ae2..27990a5 100644
+index 5502b063ab..9e8a31a20b 100644
 --- a/media/libstagefright/wifi-display/source/Converter.cpp
 +++ b/media/libstagefright/wifi-display/source/Converter.cpp
 @@ -161,7 +161,7 @@ status_t Converter::initEncoder() {
@@ -30,6 +31,25 @@ index d5c7ae2..27990a5 100644
  
                  setVideoBitrate(videoBitrate);
              }
+diff --git a/media/libstagefright/wifi-display/source/WifiDisplaySource.cpp b/media/libstagefright/wifi-display/source/WifiDisplaySource.cpp
+index 96aceb1df4..1e9bd971c0 100644
+--- a/media/libstagefright/wifi-display/source/WifiDisplaySource.cpp
++++ b/media/libstagefright/wifi-display/source/WifiDisplaySource.cpp
+@@ -79,11 +79,11 @@ WifiDisplaySource::WifiDisplaySource(
+     mSupportedSourceVideoFormats.disableAll();
+ 
+     mSupportedSourceVideoFormats.setNativeResolution(
+-            VideoFormats::RESOLUTION_CEA, 5);  // 1280x720 p30
++            VideoFormats::RESOLUTION_CEA, 7);  // 1920x1080 p30
+ 
+-    // Enable all resolutions up to 1280x720p30
++    // Enable all resolutions up to 1920x1080p30
+     mSupportedSourceVideoFormats.enableResolutionUpto(
+-            VideoFormats::RESOLUTION_CEA, 5,
++            VideoFormats::RESOLUTION_CEA, 7,
+             VideoFormats::PROFILE_CHP,  // Constrained High Profile
+             VideoFormats::LEVEL_32);    // Level 3.2
+ }
 -- 
-2.7.4
+2.25.1
 
